@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice System - Shivom Eye Care</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        input:focus, select:focus {
+            background-color: #f8fafc;
+            border-color: #3b82f6;
+        }
+
+        /* High-Fidelity Professional Billing Layout Engine */
+        @media print {
+            html, body { background: white; color: black; font-size: 13px; margin: 0; padding: 0; }
+            .no-print { display: none !important; }
+            .print-container { box-shadow: none !important; border: none !important; margin: 0 !important; padding: 0px !important; max-width: 100% !important; }
+            
+            input, select, textarea { 
+                border: none !important; 
+                outline: none !important; 
+                background: transparent !important; 
+                padding: 0 !important; 
+                appearance: none;
+                font-weight: bold;
+                color: #000000 !important;
+            }
+            .p-6, .p-8 { padding: 0px !important; }
+            .my-6 { margin-top: 0px !important; margin-bottom: 0px !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-gray-800 font-sans pb-12">
+
+    <!-- Sticky Accounting Control Bar -->
+    <div class="no-print bg-slate-900 text-white sticky top-0 z-50 px-4 py-2.5 shadow-md">
+        <div class="max-w-4xl mx-auto w-full flex items-center justify-between">
+            <span class="text-xs uppercase font-black tracking-widest text-blue-400 bg-blue-950/50 px-3 py-1 rounded border border-blue-900">Billing & Invoice Console</span>
+            <div class="flex gap-2">
+                <button type="button" onclick="addNewBillingRow()" class="bg-slate-700 hover:bg-slate-600 text-xs font-bold px-3 py-1.5 rounded transition">+ Add New Item</button>
+                <button type="button" onclick="clearInvoiceBoard()" class="bg-red-950 hover:bg-red-900 border border-red-800 text-xs font-bold px-3 py-1.5 rounded transition">⟲ Reset Bill</button>
+                <button type="button" onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-xs font-bold px-4 py-1.5 rounded transition shadow-sm">💾 Print / Save Bill PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Master Invoice Paper Sheet Container -->
+    <main class="print-container max-w-4xl mx-auto bg-white my-6 p-8 md:p-10 shadow-sm border border-gray-200/60 rounded-xl space-y-6">
+        
+        <!-- Clinic Letterhead Details Header -->
+        <header class="flex justify-between items-start border-b-2 border-blue-900 pb-3">
+            <div class="flex items-center gap-3">
+                <img src="logo.png" alt="Logo" class="h-12 w-auto object-contain" onerror="this.style.display='none'">
+                <div>
+                    <h1 class="text-2xl font-black text-blue-900 tracking-tight leading-none">SHIVOM EYE CARE</h1>
+                    <p class="text-[10px] font-extrabold text-blue-700 uppercase tracking-widest mt-0.5">Your Eyes, Our Care</p>
+                    <p class="text-[11px] text-gray-500 font-medium leading-tight mt-1">
+                        <strong>Dr. Kenshuk Marwah</strong> — MS, FICO (UK), DNB, MNAMS, FVRS, FAICO (Retina), PDCR<br>
+                        DMC Reg No: 29327 | shivomeyecare@gmail.com
+                    </p>
+                </div>
+            </div>
+            <div class="text-right text-[10px] text-gray-500 space-y-0.5 font-medium">
+                <p class="font-extrabold text-gray-900 uppercase tracking-wide text-xs">Retail Invoice / Bill</p>
+                <p>B-80, B Block, Mayfield Garden,</p>
+                <p>Sector 50, Gurugram, Haryana 122018</p>
+                <p>📞 GGN: 9485740077 | DLH: 7827133830</p>
+            </div>
+        </header>
+
+        <!-- Demographics & Metadata Matrix Layout -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 border border-gray-200 rounded-xl p-4 text-xs md:text-sm">
+            <!-- Patient / Recipient Block -->
+            <div class="space-y-1.5">
+                <h3 class="text-[10px] font-black text-blue-900 uppercase tracking-wider border-b pb-0.5">Bill To (Patient)</h3>
+                <div class="flex items-center gap-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Name:</span><input type="text" id="bill_name" value="Master Yuvan" class="w-full bg-transparent font-extrabold text-gray-900 focus:outline-none"></div>
+                <div class="flex items-center gap-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Phone:</span><input type="tel" id="bill_phone" value="8700719377" class="w-full bg-transparent font-extrabold text-gray-900 focus:outline-none"></div>
+                <div class="flex items-center gap-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Age/Sex:</span><input type="text" id="bill_age_sex" value="16/M" class="w-full bg-transparent font-extrabold text-gray-900 focus:outline-none"></div>
+                <div class="flex items-center gap-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Address:</span><input type="text" id="bill_address" value="GURUGRAM" class="w-full bg-transparent font-extrabold text-gray-900 focus:outline-none"></div>
+            </div>
+
+            <!-- Meta Parameters Block -->
+            <div class="space-y-1.5 md:border-l md:pl-4 border-gray-200">
+                <h3 class="text-[10px] font-black text-blue-900 uppercase tracking-wider border-b pb-0.5">Invoice Metadata</h3>
+                <div class="flex items-center gap-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Date:</span><input type="text" id="bill_date" value="13 June 2026" class="w-full bg-transparent font-extrabold text-gray-900 focus:outline-none"></div>
+                <div class="flex items-center gap-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Branch:</span><input type="text" id="bill_branch" value="GURUGRAM" class="w-full bg-transparent font-extrabold text-gray-900 focus:outline-none"></div>
+                <div class="flex items-center gap-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Type:</span><input type="text" id="bill_type" value="NEW" class="w-full bg-transparent font-extrabold text-gray-900 focus:outline-none"></div>
+                <div class="flex items-center gap-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Consultant:</span><input type="text" id="bill_doctor" value="DR. KENSHUK MARWAH" class="w-full bg-transparent font-extrabold text-gray-900 focus:outline-none"></div>
+            </div>
+        </section>
+
+        <!-- Dynamic Itemized Pricing Ledger Table -->
+        <section>
+            <table class="w-full border border-gray-200 text-xs md:text-sm text-center" id="invoice_table">
+                <thead>
+                    <tr class="bg-slate-900 text-white text-[10px] font-bold uppercase tracking-wider">
+                        <th class="p-2 border-r border-b w-[8%]">#</th>
+                        <th class="p-2 border-r border-b text-left w-[47%]">Description / Item Details</th>
+                        <th class="p-2 border-r border-b w-[10%]">Qty</th>
+                        <th class="p-2 border-r border-b w-[15%]">Unit Price (₹)</th>
+                        <th class="p-2 border-b w-[20%]">Net Amount (₹)</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200" id="billing_rows_body">
+                    <!-- Row 1 -->
+                    <tr>
+                        <td class="p-2 border-r font-bold bg-gray-50/50">1</td>
+                        <td class="p-1 border-r text-left"><input type="text" value="ZEISS CLEAR AR UV BLUEGUARD" class="w-full bg-transparent px-1 focus:outline-none font-semibold"></td>
+                        <td class="p-1 border-r"><input type="number" value="1" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-center focus:outline-none qty-field font-semibold"></td>
+                        <td class="p-1 border-r"><input type="number" value="2000" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-center focus:outline-none price-field font-semibold"></td>
+                        <td class="p-1 font-bold text-gray-900 net-amount-cell">2000.00</td>
+                    </tr>
+                    <!-- Row 2 -->
+                    <tr>
+                        <td class="p-2 border-r font-bold bg-gray-50/50">2</td>
+                        <td class="p-1 border-r text-left"><input type="text" value="FRAME" class="w-full bg-transparent px-1 focus:outline-none font-semibold"></td>
+                        <td class="p-1 border-r"><input type="number" value="1" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-center focus:outline-none qty-field font-semibold"></td>
+                        <td class="p-1 border-r"><input type="number" value="1300" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-center focus:outline-none price-field font-semibold"></td>
+                        <td class="p-1 font-bold text-gray-900 net-amount-cell">1300.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Accounting Totals Breakdown Matrix Block -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 text-xs md:text-sm">
+            <!-- Left Information Columns -->
+            <div class="space-y-3">
+                <div class="bg-slate-50 border p-3 rounded-xl flex flex-col justify-between">
+                    <label class="block text-gray-400 font-bold uppercase text-[9px] mb-1">Total Collection Subheading Reference</label>
+                    <input type="text" id="bill_subheading" value="Total Consultation" class="w-full bg-transparent font-extrabold text-gray-800 focus:outline-none border-b border-dashed">
+                </div>
+                <div class="bg-slate-50 border p-3 rounded-xl flex flex-col justify-between">
+                    <label class="block text-gray-400 font-bold uppercase text-[9px] mb-1">Payment Mode Reference</label>
+                    <input type="text" id="bill_pay_mode" value="UPI" class="w-full bg-transparent font-extrabold text-blue-900 focus:outline-none border-b border-dashed">
+                </div>
+            </div>
+
+            <!-- Right Calculation Matrix Grid Blocks -->
+            <div class="bg-slate-50 border border-gray-200 rounded-xl p-4 space-y-2 font-semibold text-gray-700">
+                <div class="flex justify-between items-center border-b pb-1.5">
+                    <span class="text-gray-400 uppercase font-bold text-[10px]">Subtotal:</span>
+                    <span class="text-gray-900 font-black" id="label_subtotal">₹3300.00</span>
+                </div>
+                <div class="flex justify-between items-center border-b pb-1.5">
+                    <div class="flex items-center gap-1">
+                        <span class="text-gray-400 uppercase font-bold text-[10px]">Discount:</span>
+                        <input type="text" id="input_discount" value="10%" oninput="recalculateLedgerTotals()" class="w-16 border rounded bg-white text-center text-xs font-bold no-print py-0.5">
+                        <span class="print:inline hidden text-gray-900 font-bold text-xs" id="print_discount_label">(10%)</span>
+                    </div>
+                    <span class="text-red-700 font-bold" id="label_discount_computed">-₹330.00</span>
+                </div>
+                <div class="flex justify-between items-center border-b pb-1.5 bg-blue-50/50 p-1 rounded">
+                    <span class="text-blue-900 uppercase font-black text-[10px]">Amount Payable:</span>
+                    <span class="text-blue-900 font-black text-base" id="label_payable">₹2970.00</span>
+                </div>
+                <div class="flex justify-between items-center border-b pb-1.5">
+                    <div class="flex items-center gap-1">
+                        <span class="text-gray-400 uppercase font-bold text-[10px]">Total Paid (Received):</span>
+                        <input type="number" id="input_paid" value="2070" oninput="recalculateLedgerTotals()" class="w-20 border rounded bg-white text-center text-xs font-bold no-print py-0.5">
+                    </div>
+                    <span class="text-gray-900 font-bold" id="label_paid_printed">₹2070.00</span>
+                </div>
+                <div class="flex justify-between items-center pt-1">
+                    <span class="text-gray-400 uppercase font-bold text-[10px]">Balance Outstanding:</span>
+                    <span class="text-red-600 font-black text-sm" id="label_balance">₹900.00</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Standardized Clinical Footer Block Layout with Logo Integration -->
+        <footer class="border-t border-gray-200 pt-6 flex justify-between items-center text-[10px] text-gray-400 font-medium">
+            <div class="flex items-center gap-3">
+                <img src="logo.png" alt="Shivom Eye Care" class="h-9 w-auto opacity-80" onerror="this.style.display='none'">
+                <div>
+                    <p class="font-black text-gray-600 text-xs tracking-tight">Shivom Eye Care</p>
+                    <p>B-80, B Block, Mayfield Garden, Gurugram 122018 · Delhi: Kalkaji</p>
+                    <p class="text-[9px] text-blue-500 font-semibold">✉ shivomeyecare@gmail.com | (Not for Medicolegal Purpose)</p>
+                </div>
+            </div>
+            <div class="text-right no-print">
+                <p class="italic text-gray-300">Authorized Signature Field Included On Print</p>
+            </div>
+            <div class="hidden print:block text-center border-t border-gray-300 w-36 pt-1 text-gray-600 font-bold">
+                Authorized Signatory
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        /**
+         * Appends a new item line into the dynamic billing table layout grid.
+         */
+        function addNewBillingRow() {
+            const tbody = document.getElementById('billing_rows_body');
+            const nextIndex = tbody.children.length + 1;
+            
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="p-2 border-r font-bold bg-gray-50/50">${nextIndex}</td>
+                <td class="p-1 border-r text-left"><input type="text" placeholder="Item description detail..." class="w-full bg-transparent px-1 focus:outline-none font-semibold"></td>
+                <td class="p-1 border-r"><input type="number" value="1" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-center focus:outline-none qty-field font-semibold"></td>
+                <td class="p-1 border-r"><input type="number" value="0" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-center focus:outline-none price-field font-semibold"></td>
+                <td class="p-1 font-bold text-gray-900 net-amount-cell">0.00</td>
+            `;
+            tbody.appendChild(tr);
+            recalculateLedgerTotals();
+        }
+
+        /**
+         * Main arithmetic calculation engine processing rows, discounts, and payments.
+         */
+        function recalculateLedgerTotals() {
+            const tbody = document.getElementById('billing_rows_body');
+            let computedSubtotal = 0;
+
+            // Iterate across table lines to compute base amounts
+            Array.from(tbody.children).forEach(row => {
+                const qty = parseFloat(row.querySelector('.qty-field').value) || 0;
+                const price = parseFloat(row.querySelector('.price-field').value) || 0;
+                const netAmount = qty * price;
+                
+                row.querySelector('.net-amount-cell').innerText = netAmount.toFixed(2);
+                computedSubtotal += netAmount;
+            });
+
+            document.getElementById('label_subtotal').innerText = `₹${computedSubtotal.toFixed(2)}`;
+
+            // Process variable discount string expressions (handles % inputs smoothly)
+            const discountInputStr = document.getElementById('input_discount').value.trim();
+            let computedDiscountVal = 0;
+
+            if (discountInputStr.includes('%')) {
+                const percentageFactor = parseFloat(discountInputStr.replace('%', '')) || 0;
+                computedDiscountVal = (percentageFactor / 100) * computedSubtotal;
+                document.getElementById('print_discount_label').innerText = `(${percentageFactor.toFixed(0)}%)`;
+            } else {
+                computedDiscountVal = parseFloat(discountInputStr) || 0;
+                document.getElementById('print_discount_label').innerText = "";
+            }
+
+            document.getElementById('label_discount_computed').innerText = `-₹${computedDiscountVal.toFixed(2)}`;
+
+            // Calculate operational balance thresholds
+            const finalAmountPayable = Math.max(0, computedSubtotal - computedDiscountVal);
+            document.getElementById('label_payable').innerText = `₹${finalAmountPayable.toFixed(2)}`;
+
+            const currentPaidVal = parseFloat(document.getElementById('input_paid').value) || 0;
+            document.getElementById('label_paid_printed').innerText = `₹${currentPaidVal.toFixed(2)}`;
+
+            const balanceOutstanding = finalAmountPayable - currentPaidVal;
+            document.getElementById('label_balance').innerText = `₹${balanceOutstanding.toFixed(2)}`;
+        }
+
+        /**
+         * Clear invoice board arrays back to baseline state parameters.
+         */
+        function clearInvoiceBoard() {
+            if(confirm("Are you sure you want to completely clear and reset the current billing sheet?")) {
+                document.getElementById('bill_name').value = "";
+                document.getElementById('bill_phone').value = "";
+                document.getElementById('bill_age_sex').value = "";
+                document.getElementById('input_discount').value = "0";
+                document.getElementById('input_paid').value = "0";
+                
+                const tbody = document.getElementById('billing_rows_body');
+                tbody.innerHTML = `
+                    <tr>
+                        <td class="p-2 border-r font-bold bg-gray-50/50">1</td>
+                        <td class="p-1 border-r text-left"><input type="text" placeholder="Item description detail..." class="w-full bg-transparent px-1 focus:outline-none font-semibold"></td>
+                        <td class="p-1 border-r"><input type="number" value="1" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-center focus:outline-none qty-field font-semibold"></td>
+                        <td class="p-1 border-r"><input type="number" value="0" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-center focus:outline-none price-field font-semibold"></td>
+                        <td class="p-1 font-bold text-gray-900 net-amount-cell">0.00</td>
+                    </tr>
+                `;
+                recalculateLedgerTotals();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            recalculateLedgerTotals();
+        });
+    </script>
+</body>
+</html>
