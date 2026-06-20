@@ -202,7 +202,6 @@
     </main>
 
     <script>
-        // Central Fee Schedule Data Structure Matrix Map
         const PRICE_LIST = {
             "Consultation": 1300,
             "Consultation (Senior Optometrist)": 600,
@@ -234,21 +233,14 @@
             "NCT": 200
         };
 
-        /**
-         * Generates the selective choice dropdown inner HTML markup options sequentially (Clean names).
-         */
         function buildParticularsDropdownMarkup() {
             let optionsHtml = `<option value="" data-price="0">-- Select Particular Service / Item --</option>`;
-            
             for (const [service, price] of Object.entries(PRICE_LIST)) {
                 optionsHtml += `<option value="${service}" data-price="${price}">${service}</option>`;
             }
             return optionsHtml;
         }
 
-        /**
-         * Triggered automatically whenever a drop-down menu particular choice option switches.
-         */
         function handleItemSelection(selectElement) {
             const selectedOption = selectElement.options[selectElement.selectedIndex];
             const price = parseFloat(selectedOption.getAttribute('data-price')) || 0;
@@ -261,12 +253,8 @@
             recalculateLedgerTotals();
         }
 
-        /**
-         * Translates integers to clean literal English words dynamically.
-         */
         function convertAmountToWords(amount) {
             if (amount === 0) return "Rs. Zero Only";
-            
             const a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
             const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
             
@@ -290,13 +278,9 @@
             } else {
                 str += b[parseInt(n[7])] + ' ' + a[parseInt(n[8])];
             }
-            
             return 'Rs. ' + str.trim() + ' Only';
         }
 
-        /**
-         * Sets initial current date values systematically on application start.
-         */
         function initializeDefaultDate() {
             const dateInput = document.getElementById('bill_date');
             if (dateInput && !dateInput.value) {
@@ -304,22 +288,16 @@
                 const dd = String(today.getDate()).padStart(2, '0');
                 const mm = String(today.getMonth() + 1).padStart(2, '0');
                 const yyyy = today.getFullYear();
-                
                 dateInput.value = `${dd}/${mm}/${yyyy}`;
             }
         }
 
-        /**
-         * Parses string text input variations to extract formatted structures matching style guidelines.
-         */
         function generateSystemInvoiceNumber() {
             const rawDateStr = document.getElementById('bill_date').value.trim();
             const seqInput = document.getElementById('bill_seq_no').value || 1;
             const paddedSequenceStr = String(seqInput).padStart(3, '0');
             
-            let day = "00";
-            let month = "00";
-            let year = "00";
+            let day = "00", month = "00", year = "00";
 
             if (rawDateStr.includes('/')) {
                 const parts = rawDateStr.split('/');
@@ -337,17 +315,11 @@
                     year = String(d.getFullYear()).slice(-2);
                 }
             }
-
-            const computedInvoiceID = `${day}/${month}/${year}/${paddedSequenceStr}`;
-            document.getElementById('label_invoice_num').value = computedInvoiceID;
+            document.getElementById('label_invoice_num').value = `${day}/${month}/${year}/${paddedSequenceStr}`;
         }
 
-        /**
-         * Appends an operational table row matrix seamlessly into the system grid context.
-         */
         function addNewBillingRow(initialService = "", initialPrice = 0) {
             const tbody = document.getElementById('billing_rows_body');
-            
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td class="p-3 border-r border-gray-300 text-left">
@@ -362,16 +334,11 @@
             tbody.appendChild(tr);
 
             if (initialService) {
-                const dropdown = tr.querySelector('.particulars-dropdown');
-                dropdown.value = initialService;
+                tr.querySelector('.particulars-dropdown').value = initialService;
             }
-
             recalculateLedgerTotals();
         }
 
-        /**
-         * Main arithmetic calculation loop evaluating system lines, variables, and outputs.
-         */
         function recalculateLedgerTotals() {
             const tbody = document.getElementById('billing_rows_body');
             let computedSubtotal = 0;
@@ -385,7 +352,7 @@
                 computedSubtotal += netAmount;
             });
 
-            document.getElementById('label_subtotal').innerText = computedSubtotal.toFixed(2);
+            // Correctly assigns the dynamically totaled row sums to Gross Bill Amount fields
             document.getElementById('label_bill_amount').innerText = computedSubtotal.toFixed(2);
 
             const discountInputStr = document.getElementById('input_discount').value.trim();
@@ -411,13 +378,9 @@
             const balanceOutstanding = finalAmountPayable - currentPaidVal;
             document.getElementById('label_balance').innerText = balanceOutstanding.toFixed(2);
 
-            // Sync Word String Output to match exact Paid values
             document.getElementById('bill_words_amount').innerText = convertAmountToWords(currentPaidVal);
         }
 
-        /**
-         * Resets matrix variables back safely to initialization settings.
-         */
         function clearInvoiceBoard() {
             if(confirm("Are you sure you want to clean the active invoice grid completely?")) {
                 document.getElementById('bill_name').value = "";
@@ -429,26 +392,17 @@
                 document.getElementById('bill_seq_no').value = "1";
                 
                 initializeDefaultDate();
-                
-                const tbody = document.getElementById('billing_rows_body');
-                tbody.innerHTML = "";
-                
+                document.getElementById('billing_rows_body').innerHTML = "";
                 addNewBillingRow();
                 generateSystemInvoiceNumber();
             }
         }
 
-        // Initialize state engine on render verification complete
         window.addEventListener('DOMContentLoaded', () => {
             initializeDefaultDate();
-            
-            // Seed two initial default clean item entries
             addNewBillingRow("Consultation", 1300);
             addNewBillingRow("Visual Field Test (Both Eyes)", 3500);
-            
             generateSystemInvoiceNumber();
-
-            // Setup input listener to instantly parse explicit custom text overwrites on booking date field changes
             document.getElementById('bill_date').addEventListener('input', generateSystemInvoiceNumber);
         });
     </script>
