@@ -58,9 +58,6 @@
                 font-weight: 700;
                 color: #000000 !important;
             }
-            select {
-                background-image: none !important;
-            }
             .watermark-container::before { opacity: 0.07; }
         }
     </style>
@@ -89,7 +86,7 @@
                         <h1 class="text-3xl font-black text-blue-900 tracking-tight leading-none">SHIVOM EYE CARE</h1>
                         <p class="text-xs font-black text-blue-600 uppercase tracking-widest mt-1.5">Your Eyes, Our Care</p>
                         <p class="text-xs text-gray-600 font-medium mt-1.5 leading-tight">
-                            <strong>Dr. Kenshuk Marwah</strong> | MS, FICO (UK), DNB, FVRS| 18+ Years of trust<br>
+                            <strong>Dr. Kenshuk Marwah</strong> | MS, FICO (UK), DNB, FVRS | 18+ Years of trust<br>
                             HMC Reg No: HN-013035 | shivomeyecare@gmail.com
                         </p>
                     </div>
@@ -151,6 +148,9 @@
             </table>
         </section>
 
+        <datalist id="medications_services_list">
+            </datalist>
+
         <section class="flex flex-col items-end pt-1 text-sm font-semibold text-gray-800 relative z-10">
             <div class="w-full sm:w-1/2 border border-gray-300 divide-y divide-gray-200">
 
@@ -202,9 +202,7 @@
     </main>
 
     <script>
-        // Central Fee & Complete Pharmacy Medication Map Schedule Data Structure
         const PRICE_LIST = {
-            // --- Diagnostics & Optical Services ---
             "Consultation": 1300,
             "Consultation (Senior Optometrist)": 600,
             "Consultation with Fundus Exam": 1500,
@@ -233,8 +231,6 @@
             "Eyemask": 299,
             "Spectacle Frame": 1300,
             "NCT": 200,
-
-            // --- Pharmacy Drops / Solutions & Oral Meds ---
             "CARBOXY (CMC)": 100,
             "SONO FUSION": 450,
             "SONO HYALURONATE": 330,
@@ -275,28 +271,31 @@
         };
 
         /**
-         * Generates the selective choice dropdown inner HTML markup options sorted alphabetically (Clean names).
+         * Populates the standalone global <datalist> panel with options structured from our data keys.
          */
-        function buildParticularsDropdownMarkup() {
-            let optionsHtml = `<option value="" data-price="0">-- Select Particular Service / Medicine --</option>`;
+        function populateSearchDatalist() {
+            const datalist = document.getElementById('medications_services_list');
+            let optionsHtml = '';
             
             // Collect keys and sort alphabetically
             const sortedKeys = Object.keys(PRICE_LIST).sort();
-            
-            for (const service of sortedKeys) {
-                optionsHtml += `<option value="${service}" data-price="${PRICE_LIST[service]}">${service}</option>`;
+            for (const item of sortedKeys) {
+                optionsHtml += `<option value="${item}"></option>`;
             }
-            return optionsHtml;
+            datalist.innerHTML = optionsHtml;
         }
 
-        function handleItemSelection(selectElement) {
-            const selectedOption = selectElement.options[selectElement.selectedIndex];
-            const price = parseFloat(selectedOption.getAttribute('data-price')) || 0;
-            
-            const tr = selectElement.closest('tr');
+        /**
+         * Fires dynamically on combobox input interaction to capture match updates instantly.
+         */
+        function handleItemSearchInput(inputElement) {
+            const currentTextValue = inputElement.value.trim();
+            const tr = inputElement.closest('tr');
             const priceField = tr.querySelector('.price-field');
-            if (priceField) {
-                priceField.value = price;
+
+            // If the typed item matches the exact map entry name, load its associated price rate configuration
+            if (PRICE_LIST.hasOwnProperty(currentTextValue)) {
+                priceField.value = PRICE_LIST[currentTextValue];
             }
             recalculateLedgerTotals();
         }
@@ -371,19 +370,13 @@
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td class="p-3 border-r border-gray-300 text-left">
-                    <select onchange="handleItemSelection(this)" class="particulars-dropdown w-full bg-transparent focus:outline-none font-bold text-gray-900 border-b border-dashed border-gray-200 py-0.5 appearance-none cursor-pointer">
-                        ${buildParticularsDropdownMarkup()}
-                    </select>
+                    <input type="text" list="medications_services_list" value="${initialService}" oninput="handleItemSearchInput(this)" placeholder="Type to search service or medicine..." class="particulars-input w-full bg-transparent focus:outline-none font-bold text-gray-900 border-b border-dashed border-gray-200 py-0.5">
                 </td>
                 <td class="p-3 border-r border-gray-300"><input type="number" value="${initialPrice}" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-right focus:outline-none price-field font-bold"></td>
                 <td class="p-3 border-r border-gray-300"><input type="number" value="1" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-center focus:outline-none qty-field font-bold"></td>
                 <td class="p-3 font-black text-gray-900 text-right net-amount-cell">${initialPrice.toFixed(2)}</td>
             `;
             tbody.appendChild(tr);
-
-            if (initialService) {
-                tr.querySelector('.particulars-dropdown').value = initialService;
-            }
             recalculateLedgerTotals();
         }
 
@@ -447,8 +440,9 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             initializeDefaultDate();
+            populateSearchDatalist();
             
-            // Seed sample defaults from services & medications
+            // Seed sample defaults matching clean searchable setup
             addNewBillingRow("Consultation", 1300);
             addNewBillingRow("SONO FUSION", 450);
             
