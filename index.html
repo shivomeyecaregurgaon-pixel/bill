@@ -156,7 +156,7 @@
 
                 <div class="flex justify-between items-center p-3">
                     <span class="text-right flex-1 pr-4 text-gray-600 font-bold uppercase text-xs">Gross Bill Amount:</span>
-                    <span class="w-24 text-right font-black text-gray-900" id="label_bill_amount">0.00</span>
+                    <span class="w-24 text-right font-black text-gray-900" id="label_bill_amount">0</span>
                 </div>
 
                 <div class="flex justify-between items-center p-3 bg-slate-50/60">
@@ -165,12 +165,12 @@
                         <input type="text" id="input_discount" value="0" oninput="recalculateLedgerTotals()" class="w-20 border border-gray-300 rounded bg-white text-center text-xs font-black no-print py-0.5 text-gray-900">
                         <span class="print:inline hidden text-gray-900 font-black text-xs" id="print_discount_label"></span>
                     </div>
-                    <span class="w-24 text-right font-black text-gray-900" id="label_discount_computed">0.00</span>
+                    <span class="w-24 text-right font-black text-gray-900" id="label_discount_computed">0</span>
                 </div>
 
                 <div class="flex justify-between items-center p-3 font-black bg-blue-50/30 text-gray-900">
                     <span class="text-right flex-1 pr-4 uppercase text-xs tracking-wider">Final Payable Amount:</span>
-                    <span class="w-24 text-right text-base font-black text-blue-900" id="label_payable">0.00</span>
+                    <span class="w-24 text-right text-base font-black text-blue-900" id="label_payable">0</span>
                 </div>
 
                 <div class="flex justify-between items-center p-3">
@@ -178,12 +178,12 @@
                         <span class="text-gray-600 font-bold uppercase text-xs">Paid Amount:</span>
                         <input type="number" id="input_paid" value="0" oninput="recalculateLedgerTotals()" class="w-24 border border-gray-300 rounded bg-white text-center text-xs font-black no-print py-0.5 text-gray-900">
                     </div>
-                    <span class="w-24 text-right font-black text-gray-900" id="label_paid_printed">0.00</span>
+                    <span class="w-24 text-right font-black text-gray-900" id="label_paid_printed">0</span>
                 </div>
 
                 <div class="flex justify-between items-center p-3 bg-red-50/40">
                     <span class="text-right flex-1 pr-4 text-red-900 font-black uppercase text-xs">Outstanding Due:</span>
-                    <span class="w-24 text-right font-black text-red-700 text-base" id="label_balance">0.00</span>
+                    <span class="w-24 text-right font-black text-red-700 text-base" id="label_balance">0</span>
                 </div>
             </div>
         </section>
@@ -202,9 +202,8 @@
     </main>
 
     <script>
-        // Updated Master Inventory Price Schedule List Matrix
+        // System Data Inventory Map
         const PRICE_LIST = {
-            // --- Core Services & Diagnostic Scans ---
             "Consultation": 1300,
             "Consultation (Senior Optometrist)": 600,
             "Consultation with Fundus Exam": 1500,
@@ -231,8 +230,6 @@
             "Conjunctival Wash (per eye)": 500,
             "Eye Patch": 500,
             "NCT": 200,
-
-            // --- Updated Pharmacy Inventory List ---
             "Akrosite": 160,
             "Aurimox-CV Tablet": 200,
             "Benzomin Plus Syrup": 111,
@@ -326,7 +323,8 @@
             const priceField = tr.querySelector('.price-field');
 
             if (PRICE_LIST.hasOwnProperty(currentTextValue)) {
-                priceField.value = PRICE_LIST[currentTextValue];
+                // Rounds list values immediately upon matching key item inputs
+                priceField.value = Math.round(PRICE_LIST[currentTextValue]);
             }
             recalculateLedgerTotals();
         }
@@ -399,13 +397,17 @@
         function addNewBillingRow(initialService = "", initialPrice = 0) {
             const tbody = document.getElementById('billing_rows_body');
             const tr = document.createElement('tr');
+            
+            // Enforce rounding onto parameters passed systematically during line loading routines
+            const roundedPrice = Math.round(initialPrice);
+            
             tr.innerHTML = `
                 <td class="p-3 border-r border-gray-300 text-left">
                     <input type="text" list="medications_services_list" value="${initialService}" oninput="handleItemSearchInput(this)" placeholder="Type to search service or medicine..." class="particulars-input w-full bg-transparent focus:outline-none font-bold text-gray-900 border-b border-dashed border-gray-200 py-0.5">
                 </td>
-                <td class="p-3 border-r border-gray-300"><input type="number" value="${initialPrice}" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-right focus:outline-none price-field font-bold"></td>
+                <td class="p-3 border-r border-gray-300"><input type="number" value="${roundedPrice}" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-right focus:outline-none price-field font-bold"></td>
                 <td class="p-3 border-r border-gray-300"><input type="number" value="1" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-center focus:outline-none qty-field font-bold"></td>
-                <td class="p-3 font-black text-gray-900 text-right net-amount-cell">${initialPrice.toFixed(2)}</td>
+                <td class="p-3 font-black text-gray-900 text-right net-amount-cell">${roundedPrice}</td>
             `;
             tbody.appendChild(tr);
             recalculateLedgerTotals();
@@ -417,37 +419,38 @@
 
             Array.from(tbody.children).forEach(row => {
                 const qty = parseFloat(row.querySelector('.qty-field').value) || 0;
-                const price = parseFloat(row.querySelector('.price-field').value) || 0;
-                const netAmount = qty * price;
+                // Force full tracking variable parsing metrics to round out whole integers directly
+                const price = Math.round(parseFloat(row.querySelector('.price-field').value) || 0);
+                const netAmount = Math.round(qty * price);
                 
-                row.querySelector('.net-amount-cell').innerText = netAmount.toFixed(2);
+                row.querySelector('.net-amount-cell').innerText = netAmount;
                 computedSubtotal += netAmount;
             });
 
-            document.getElementById('label_bill_amount').innerText = computedSubtotal.toFixed(2);
+            document.getElementById('label_bill_amount').innerText = computedSubtotal;
 
             const discountInputStr = document.getElementById('input_discount').value.trim();
             let computedDiscountVal = 0;
 
             if (discountInputStr.includes('%')) {
                 const percentageFactor = parseFloat(discountInputStr.replace('%', '')) || 0;
-                computedDiscountVal = (percentageFactor / 100) * computedSubtotal;
+                computedDiscountVal = Math.round((percentageFactor / 100) * computedSubtotal);
                 document.getElementById('print_discount_label').innerText = `(${percentageFactor.toFixed(0)}%)`;
             } else {
-                computedDiscountVal = parseFloat(discountInputStr) || 0;
+                computedDiscountVal = Math.round(parseFloat(discountInputStr) || 0);
                 document.getElementById('print_discount_label').innerText = "";
             }
 
-            document.getElementById('label_discount_computed').innerText = computedDiscountVal.toFixed(2);
+            document.getElementById('label_discount_computed').innerText = computedDiscountVal;
 
             const finalAmountPayable = Math.max(0, computedSubtotal - computedDiscountVal);
-            document.getElementById('label_payable').innerText = finalAmountPayable.toFixed(2);
+            document.getElementById('label_payable').innerText = finalAmountPayable;
 
-            const currentPaidVal = parseFloat(document.getElementById('input_paid').value) || 0;
-            document.getElementById('label_paid_printed').innerText = currentPaidVal.toFixed(2);
+            const currentPaidVal = Math.round(parseFloat(document.getElementById('input_paid').value) || 0);
+            document.getElementById('label_paid_printed').innerText = currentPaidVal;
 
             const balanceOutstanding = finalAmountPayable - currentPaidVal;
-            document.getElementById('label_balance').innerText = balanceOutstanding.toFixed(2);
+            document.getElementById('label_balance').innerText = balanceOutstanding;
 
             document.getElementById('bill_words_amount').innerText = convertAmountToWords(currentPaidVal);
         }
@@ -473,7 +476,7 @@
             initializeDefaultDate();
             populateSearchDatalist();
             
-            // Seed sample defaults matching new searchable inventory
+            // Seed clean whole number rounded layout samples
             addNewBillingRow("Consultation", 1300);
             addNewBillingRow("Sono Fusion", 450);
             
