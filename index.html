@@ -58,7 +58,6 @@
                 font-weight: 700;
                 color: #000000 !important;
             }
-            /* Hide the dropdown arrow indicator natively during hard printing layout renders */
             select {
                 background-image: none !important;
             }
@@ -83,9 +82,9 @@
         
         <header class="border-b-4 border-blue-600 pb-3">
             <div class="flex justify-between items-start">
-                <div class="flex items-center gap-5">
-                    <img src="logo.png" alt="Logo" class="w-24 h-24 object-contain fallback-hidden" onerror="this.style.display='none'; document.getElementById('logo_fallback').style.display='block'">
-                    <div id="logo_fallback" class="hidden bg-blue-600 p-5 text-white font-black text-3xl rounded-full leading-none shadow-sm">👁</div>
+                <div class="flex items-center gap-6">
+                    <img src="logo.png" alt="Logo" class="w-32 h-32 object-contain fallback-hidden" onerror="this.style.display='none'; document.getElementById('logo_fallback').style.display='block'">
+                    <div id="logo_fallback" class="hidden bg-blue-600 p-6 text-white font-black text-4xl rounded-full leading-none shadow-sm">👁</div>
                     <div>
                         <h1 class="text-3xl font-black text-blue-900 tracking-tight leading-none">SHIVOM EYE CARE</h1>
                         <p class="text-xs font-black text-blue-600 uppercase tracking-widest mt-1.5">Your Eyes, Our Care</p>
@@ -141,8 +140,7 @@
             <table class="w-full border-collapse border border-gray-300 text-sm text-center" id="invoice_table">
                 <thead>
                     <tr class="bg-gray-50 border-b border-gray-300 font-bold text-gray-800 text-left">
-                        <th class="p-3 border-r border-gray-300 w-[45%] text-left">Particulars</th>
-                        <th class="p-3 border-r border-gray-300 text-center w-[15%]">Invoice Date</th>
+                        <th class="p-3 border-r border-gray-300 w-[60%] text-left">Particulars</th>
                         <th class="p-3 border-r border-gray-300 text-right w-[15%]">Rate (Rs)</th>
                         <th class="p-3 border-r border-gray-300 text-center w-[10%]">QTY</th>
                         <th class="p-3 text-right w-[15%]">Amount (Rs)</th>
@@ -155,12 +153,6 @@
 
         <section class="flex flex-col items-end pt-1 text-sm font-semibold text-gray-800 relative z-10">
             <div class="w-full sm:w-1/2 border border-gray-300 divide-y divide-gray-200">
-                
-                <div class="flex justify-between items-center bg-gray-100/80 p-3 font-black text-gray-900">
-                    <span class="text-right flex-1 pr-6 uppercase text-xs tracking-wider text-gray-600">Total Items Summary:</span>
-                    <span class="w-16 text-center text-blue-900" id="label_total_qty">0.00</span>
-                    <span class="w-24 text-right" id="label_subtotal">0.00</span>
-                </div>
 
                 <div class="flex justify-between items-center p-3">
                     <span class="text-right flex-1 pr-4 text-gray-600 font-bold uppercase text-xs">Gross Bill Amount:</span>
@@ -217,7 +209,7 @@
             "Consultation with Fundus Exam": 1500,
             "Emergency Consultation": 2000,
             "Follow-up (within 15 days)": 0,
-            "Follow-up (after 15 days)": 1300, // Matched to regular
+            "Follow-up (after 15 days)": 1300,
             "Computer Vision Syndrome Evaluation": 1000,
             "BP Check-up": 100,
             "Medical Certificate": 500,
@@ -243,14 +235,13 @@
         };
 
         /**
-         * Generates the selective choice dropdown inner HTML markup options sequentially.
+         * Generates the selective choice dropdown inner HTML markup options sequentially (Clean names).
          */
         function buildParticularsDropdownMarkup() {
             let optionsHtml = `<option value="" data-price="0">-- Select Particular Service / Item --</option>`;
             
-            // Generate categorical options blocks dynamically
             for (const [service, price] of Object.entries(PRICE_LIST)) {
-                optionsHtml += `<option value="${service}" data-price="${price}">${service} (Rs. ${price})</option>`;
+                optionsHtml += `<option value="${service}" data-price="${price}">${service}</option>`;
             }
             return optionsHtml;
         }
@@ -349,10 +340,6 @@
 
             const computedInvoiceID = `${day}/${month}/${year}/${paddedSequenceStr}`;
             document.getElementById('label_invoice_num').value = computedInvoiceID;
-            
-            document.querySelectorAll('.item-date-field').forEach(field => {
-                field.value = rawDateStr;
-            });
         }
 
         /**
@@ -360,7 +347,6 @@
          */
         function addNewBillingRow(initialService = "", initialPrice = 0) {
             const tbody = document.getElementById('billing_rows_body');
-            const currentDateVal = document.getElementById('bill_date').value;
             
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -369,14 +355,12 @@
                         ${buildParticularsDropdownMarkup()}
                     </select>
                 </td>
-                <td class="p-3 border-r border-gray-300 text-center text-gray-700"><input type="text" value="${currentDateVal}" class="w-full bg-transparent text-center focus:outline-none item-date-field font-semibold"></td>
                 <td class="p-3 border-r border-gray-300"><input type="number" value="${initialPrice}" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-right focus:outline-none price-field font-bold"></td>
                 <td class="p-3 border-r border-gray-300"><input type="number" value="1" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-center focus:outline-none qty-field font-bold"></td>
                 <td class="p-3 font-black text-gray-900 text-right net-amount-cell">${initialPrice.toFixed(2)}</td>
             `;
             tbody.appendChild(tr);
 
-            // Set select elements values if parameters match preset values
             if (initialService) {
                 const dropdown = tr.querySelector('.particulars-dropdown');
                 dropdown.value = initialService;
@@ -391,7 +375,6 @@
         function recalculateLedgerTotals() {
             const tbody = document.getElementById('billing_rows_body');
             let computedSubtotal = 0;
-            let totalQty = 0;
 
             Array.from(tbody.children).forEach(row => {
                 const qty = parseFloat(row.querySelector('.qty-field').value) || 0;
@@ -400,10 +383,8 @@
                 
                 row.querySelector('.net-amount-cell').innerText = netAmount.toFixed(2);
                 computedSubtotal += netAmount;
-                totalQty += qty;
             });
 
-            document.getElementById('label_total_qty').innerText = totalQty.toFixed(2);
             document.getElementById('label_subtotal').innerText = computedSubtotal.toFixed(2);
             document.getElementById('label_bill_amount').innerText = computedSubtotal.toFixed(2);
 
@@ -450,9 +431,8 @@
                 initializeDefaultDate();
                 
                 const tbody = document.getElementById('billing_rows_body');
-                tbody.innerHTML = ""; // Wipe entries
+                tbody.innerHTML = "";
                 
-                // Add single initialized empty default selector line template
                 addNewBillingRow();
                 generateSystemInvoiceNumber();
             }
@@ -462,7 +442,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             initializeDefaultDate();
             
-            // Seed two initial default item entries as sample rows matching your previous interface state
+            // Seed two initial default clean item entries
             addNewBillingRow("Consultation", 1300);
             addNewBillingRow("Visual Field Test (Both Eyes)", 3500);
             
