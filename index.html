@@ -38,6 +38,17 @@
             .no-print { display: none !important; }
             .print-container { box-shadow: none !important; border: none !important; margin: 0 !important; padding: 10px !important; max-width: 100% !important; }
             
+            /* Retain side-by-side grid alignment structural boxes when printing */
+            .print-grid {
+                display: table !important;
+                width: 100% !important;
+            }
+            .print-col {
+                display: table-cell !important;
+                width: 50% !important;
+                vertical-align: top !important;
+            }
+            
             input, select, textarea { 
                 border: none !important; 
                 outline: none !important; 
@@ -90,24 +101,27 @@
             </div>
         </header>
 
-        <section class="grid grid-cols-1 md:grid-cols-12 gap-6 text-sm border-b border-gray-200 pb-5 relative z-10">
-            <div class="md:col-span-6 space-y-2">
+        <section class="print-grid grid grid-cols-1 md:grid-cols-12 gap-6 text-sm border-b border-gray-200 pb-5 relative z-10">
+            <div class="print-col md:col-span-6 space-y-2">
                 <div class="flex items-center gap-1"><span class="font-bold text-gray-900 min-w-[75px]">Patient:</span><input type="text" id="bill_name" value="Master Yuvan" class="w-full bg-transparent font-black text-gray-900 focus:outline-none text-base"></div>
                 <div class="flex items-center gap-1"><span class="font-bold text-gray-600 min-w-[75px]">Age / Sex:</span><input type="text" id="bill_age_sex" value="16 Years / Male" class="w-full bg-transparent font-bold text-gray-800 focus:outline-none"></div>
                 <div class="flex items-center gap-1"><span class="font-bold text-gray-600 min-w-[75px]">Phone:</span><input type="text" id="bill_phone" value="8700719377" class="w-full bg-transparent font-bold text-gray-800 focus:outline-none"></div>
                 <div class="flex items-center gap-1"><span class="font-bold text-gray-600 min-w-[75px]">Address:</span><input type="text" id="bill_address" value="Gurugram, Haryana" class="w-full bg-transparent font-bold text-gray-800 focus:outline-none"></div>
             </div>
 
-            <div class="md:col-span-6 md:pl-8 space-y-2">
+            <div class="print-col md:col-span-6 md:pl-8 space-y-2">
                 <div class="flex items-center gap-1"><span class="font-bold text-gray-600 min-w-[120px]">UHID No:</span><input type="text" id="bill_uhid" value="556" class="w-full bg-transparent font-black text-gray-900 focus:outline-none"></div>
+                
                 <div class="flex items-center gap-1">
                     <span class="font-bold text-gray-600 min-w-[120px]">Booking Date:</span>
                     <input type="text" id="bill_date" class="w-full bg-transparent font-bold text-gray-800 focus:outline-none">
                 </div>
-                <div class="flex items-center gap-1">
+                
+                <div class="no-print flex items-center gap-1">
                     <span class="font-bold text-gray-600 min-w-[120px]">Booking Sequence:</span>
-                    <input type="number" id="bill_seq_no" value="1" min="1" max="999" oninput="generateSystemInvoiceNumber()" class="w-20 border border-gray-300 rounded text-center no-print px-1 py-0.5 font-bold text-gray-900"><span class="print:hidden text-gray-400 text-[11px]">(Daily ID)</span>
+                    <input type="number" id="bill_seq_no" value="1" min="1" max="999" oninput="generateSystemInvoiceNumber()" class="w-20 border border-gray-300 rounded text-center px-1 py-0.5 font-bold text-gray-900"><span class="text-gray-400 text-[11px]">(Daily ID)</span>
                 </div>
+                
                 <div class="flex items-center gap-1">
                     <span class="font-bold text-gray-900 min-w-[120px]">Invoice Number:</span>
                     <input type="text" id="label_invoice_num" class="w-full bg-transparent font-black text-blue-900 tracking-wide focus:outline-none text-sm" value="Generating...">
