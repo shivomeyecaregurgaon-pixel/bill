@@ -202,7 +202,9 @@
     </main>
 
     <script>
+        // Updated Master Inventory Price Schedule List Matrix
         const PRICE_LIST = {
+            // --- Core Services & Diagnostic Scans ---
             "Consultation": 1300,
             "Consultation (Senior Optometrist)": 600,
             "Consultation with Fundus Exam": 1500,
@@ -228,56 +230,89 @@
             "Ocular Injury Charge (Mild)": 1000,
             "Conjunctival Wash (per eye)": 500,
             "Eye Patch": 500,
-            "Eyemask": 299,
-            "Spectacle Frame": 1300,
             "NCT": 200,
-            "CARBOXY (CMC)": 100,
-            "SONO FUSION": 450,
-            "SONO HYALURONATE": 330,
-            "LUBCIN": 375,
-            "MIBOXY (Moxifloxacin)": 100,
-            "OBIN-F (TOBRAMYCIN)": 160,
-            "MIBOXY-D (Moxy & Dexa)": 120,
-            "MIBOXY-P (MOXI & PREDNISOLONE)": 125,
-            "GATITEC-F": 155,
-            "MOLEF-LP": 170,
-            "MYFLUR (Fluorometholone)": 100,
-            "FLOPPY (Fluorometholone)": 100,
-            "ILOTO (Loteprednol)": 140,
-            "OLOPRO": 160,
-            "OLOPRO-KT (Olo & Keto)": 160,
-            "ZOL-AH": 100,
-            "Eye Drop – Olopro": 190,
-            "NETANZA (Natamycin)": 120,
-            "VORIZONE": 360,
-            "BRISHIELD (Brimonidine)": 200,
-            "TRAVIPRESS-PF": 220,
-            "LOPRESS-250 (Acetazolamide)": 45,
-            "SAFEATRO": 200,
-            "Eye Drop – Sono Max": 550,
+
+            // --- Updated Pharmacy Inventory List ---
+            "Akrosite": 160,
+            "Aurimox-CV Tablet": 200,
+            "Benzomin Plus Syrup": 111,
+            "Brishield": 200,
+            "Carboxy (CMC)": 100,
+            "Chloint H Eye Ointment": 71.42,
+            "Chloint PX Eye Ointment": 78.57,
+            "Choroid (Acetazolamide)": 45,
+            "CI Profloxacin": 80,
+            "Combilube": 185,
+            "Copvit": 100,
+            "Copvit Plus": 230,
+            "Cormega-500": 190,
+            "Dpanthom": 190,
+            "Ecofres HA": 525,
             "Eye Drop – Motogrip": 255,
-            "CHLOINT-H EYE OINTMENT": 71.42,
-            "CHLOINT PX EYE OINTMENT": 78.57,
-            "PROTAIR-F TAB (Fexofenadine)": 114.28,
-            "AURIMOX-CV TABLET (Amoxicillin)": 200,
-            "BENZOMIN-PLUS (SYRUP)": 111,
-            "COPVIT PLUS": 230,
-            "OMEGA 3 FATTY ACID 500MG": 300,
-            "PROMAQ EYE CARE GUMMIES": 264.4,
-            "NAPAH": 250,
-            "FERR-XT": 150,
-            "CORMEGA-500": 190,
-            "Tablet – Imega": 200
+            "Eye Drop – Olopro": 190,
+            "Eye Drop – Sono Max": 550,
+            "Eylys Dry Eye Mask": 3499,
+            "Ferr-XT": 150,
+            "Floppy": 100,
+            "Gatitec-F": 155,
+            "Gloprokt": 190,
+            "Hyura-PG": 403,
+            "Iloto": 140,
+            "Imega Tablet": 200,
+            "K-Fresh (CMC 1%)": 168,
+            "Katcin Plus": 150,
+            "Kripcon Gel Eye Mask": 299,
+            "Lipimax": 1950,
+            "Lopress-250": 45,
+            "Lotesol": 150,
+            "Lubcin": 375,
+            "Lutiz Kid Gummies": 355,
+            "Miboxy": 100,
+            "Miboxy-D": 120,
+            "Miboxy-KT": 120,
+            "Miboxy-P": 118,
+            "Misty Fresh": 390,
+            "Molef": 150,
+            "Molef-LP": 170,
+            "Motogrip": 255,
+            "Myflur": 100,
+            "Napah": 250,
+            "Nepafenac (Nepams)": 255,
+            "Nepafenac (Zubane)": 190,
+            "Nepatax": 180,
+            "Netanza": 120,
+            "Obin-F (Tobramycin)": 160,
+            "Objn-F": 160,
+            "Olopro": 160,
+            "Olopro-KT": 160,
+            "Omega 3 Fatty Acid 500 mg": 300,
+            "OLOPRO (Eye Drop)": 190,
+            "Opat": 170,
+            "Osmogreen (Omega-3)": 244,
+            "Pilocar": 85,
+            "Promaq Eye Care Gummies": 264.40,
+            "Protair-F Eye Drops": 160,
+            "Protair-F Tablet": 114.28,
+            "Qumoxi-LP": 164,
+            "RuteTears DS": 163,
+            "Safeatro": 200,
+            "Sono Fusion": 450,
+            "Sono Hyaluronate": 330,
+            "Spectacle Frame": 1300,
+            "Tobaped": 138,
+            "Travipress-PF": 220,
+            "Uvlot Eye Ointment": 190,
+            "Viscodew": 234,
+            "Vitoaxt-D": 236,
+            "Vorizone": 360,
+            "Zentob Eye Ointment": 190,
+            "Zenvit-Gold": 1017,
+            "Zol-AH": 100
         };
 
-        /**
-         * Populates the standalone global <datalist> panel with options structured from our data keys.
-         */
         function populateSearchDatalist() {
             const datalist = document.getElementById('medications_services_list');
             let optionsHtml = '';
-            
-            // Collect keys and sort alphabetically
             const sortedKeys = Object.keys(PRICE_LIST).sort();
             for (const item of sortedKeys) {
                 optionsHtml += `<option value="${item}"></option>`;
@@ -285,15 +320,11 @@
             datalist.innerHTML = optionsHtml;
         }
 
-        /**
-         * Fires dynamically on combobox input interaction to capture match updates instantly.
-         */
         function handleItemSearchInput(inputElement) {
             const currentTextValue = inputElement.value.trim();
             const tr = inputElement.closest('tr');
             const priceField = tr.querySelector('.price-field');
 
-            // If the typed item matches the exact map entry name, load its associated price rate configuration
             if (PRICE_LIST.hasOwnProperty(currentTextValue)) {
                 priceField.value = PRICE_LIST[currentTextValue];
             }
@@ -442,9 +473,9 @@
             initializeDefaultDate();
             populateSearchDatalist();
             
-            // Seed sample defaults matching clean searchable setup
+            // Seed sample defaults matching new searchable inventory
             addNewBillingRow("Consultation", 1300);
-            addNewBillingRow("SONO FUSION", 450);
+            addNewBillingRow("Sono Fusion", 450);
             
             generateSystemInvoiceNumber();
             document.getElementById('bill_date').addEventListener('input', generateSystemInvoiceNumber);
