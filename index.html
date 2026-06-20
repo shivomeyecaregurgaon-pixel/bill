@@ -58,6 +58,10 @@
                 font-weight: 700;
                 color: #000000 !important;
             }
+            /* Hide the dropdown arrow indicator natively during hard printing layout renders */
+            select {
+                background-image: none !important;
+            }
             .watermark-container::before { opacity: 0.07; }
         }
     </style>
@@ -145,21 +149,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200" id="billing_rows_body">
-                    <tr>
-                        <td class="p-3 border-r border-gray-300 text-left"><input type="text" value="Ophthalmologist Consultation" class="w-full bg-transparent focus:outline-none font-bold text-gray-900"></td>
-                        <td class="p-3 border-r border-gray-300 text-center text-gray-700"><input type="text" class="w-full bg-transparent text-center focus:outline-none item-date-field font-semibold"></td>
-                        <td class="p-3 border-r border-gray-300"><input type="number" value="3000" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-right focus:outline-none price-field font-bold"></td>
-                        <td class="p-3 border-r border-gray-300"><input type="number" value="1" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-center focus:outline-none qty-field font-bold"></td>
-                        <td class="p-3 font-black text-gray-900 text-right net-amount-cell">3000.00</td>
-                    </tr>
-                    <tr>
-                        <td class="p-3 border-r border-gray-300 text-left"><input type="text" value="Visual Acuity Test" class="w-full bg-transparent focus:outline-none font-bold text-gray-900"></td>
-                        <td class="p-3 border-r border-gray-300 text-center text-gray-700"><input type="text" class="w-full bg-transparent text-center focus:outline-none item-date-field font-semibold"></td>
-                        <td class="p-3 border-r border-gray-300"><input type="number" value="1500" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-right focus:outline-none price-field font-bold"></td>
-                        <td class="p-3 border-r border-gray-300"><input type="number" value="1" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-center focus:outline-none qty-field font-bold"></td>
-                        <td class="p-3 font-black text-gray-900 text-right net-amount-cell">1500.00</td>
-                    </tr>
-                </tbody>
+                    </tbody>
             </table>
         </section>
 
@@ -168,40 +158,40 @@
                 
                 <div class="flex justify-between items-center bg-gray-100/80 p-3 font-black text-gray-900">
                     <span class="text-right flex-1 pr-6 uppercase text-xs tracking-wider text-gray-600">Total Items Summary:</span>
-                    <span class="w-16 text-center text-blue-900" id="label_total_qty">2.00</span>
-                    <span class="w-24 text-right" id="label_subtotal">4500.00</span>
+                    <span class="w-16 text-center text-blue-900" id="label_total_qty">0.00</span>
+                    <span class="w-24 text-right" id="label_subtotal">0.00</span>
                 </div>
 
                 <div class="flex justify-between items-center p-3">
                     <span class="text-right flex-1 pr-4 text-gray-600 font-bold uppercase text-xs">Gross Bill Amount:</span>
-                    <span class="w-24 text-right font-black text-gray-900" id="label_bill_amount">4500.00</span>
+                    <span class="w-24 text-right font-black text-gray-900" id="label_bill_amount">0.00</span>
                 </div>
 
                 <div class="flex justify-between items-center p-3 bg-slate-50/60">
                     <div class="text-right flex-1 pr-4 flex items-center justify-end gap-1">
                         <span class="text-gray-600 font-bold uppercase text-xs">Discount Amount:</span>
-                        <input type="text" id="input_discount" value="700" oninput="recalculateLedgerTotals()" class="w-20 border border-gray-300 rounded bg-white text-center text-xs font-black no-print py-0.5 text-gray-900">
+                        <input type="text" id="input_discount" value="0" oninput="recalculateLedgerTotals()" class="w-20 border border-gray-300 rounded bg-white text-center text-xs font-black no-print py-0.5 text-gray-900">
                         <span class="print:inline hidden text-gray-900 font-black text-xs" id="print_discount_label"></span>
                     </div>
-                    <span class="w-24 text-right font-black text-gray-900" id="label_discount_computed">700.00</span>
+                    <span class="w-24 text-right font-black text-gray-900" id="label_discount_computed">0.00</span>
                 </div>
 
                 <div class="flex justify-between items-center p-3 font-black bg-blue-50/30 text-gray-900">
                     <span class="text-right flex-1 pr-4 uppercase text-xs tracking-wider">Final Payable Amount:</span>
-                    <span class="w-24 text-right text-base font-black text-blue-900" id="label_payable">3800.00</span>
+                    <span class="w-24 text-right text-base font-black text-blue-900" id="label_payable">0.00</span>
                 </div>
 
                 <div class="flex justify-between items-center p-3">
                     <div class="text-right flex-1 pr-4 flex items-center justify-end gap-1">
                         <span class="text-gray-600 font-bold uppercase text-xs">Paid Amount:</span>
-                        <input type="number" id="input_paid" value="3000" oninput="recalculateLedgerTotals()" class="w-24 border border-gray-300 rounded bg-white text-center text-xs font-black no-print py-0.5 text-gray-900">
+                        <input type="number" id="input_paid" value="0" oninput="recalculateLedgerTotals()" class="w-24 border border-gray-300 rounded bg-white text-center text-xs font-black no-print py-0.5 text-gray-900">
                     </div>
-                    <span class="w-24 text-right font-black text-gray-900" id="label_paid_printed">3000.00</span>
+                    <span class="w-24 text-right font-black text-gray-900" id="label_paid_printed">0.00</span>
                 </div>
 
                 <div class="flex justify-between items-center p-3 bg-red-50/40">
                     <span class="text-right flex-1 pr-4 text-red-900 font-black uppercase text-xs">Outstanding Due:</span>
-                    <span class="w-24 text-right font-black text-red-700 text-base" id="label_balance">800.00</span>
+                    <span class="w-24 text-right font-black text-red-700 text-base" id="label_balance">0.00</span>
                 </div>
             </div>
         </section>
@@ -220,6 +210,66 @@
     </main>
 
     <script>
+        // Central Fee Schedule Data Structure Matrix Map
+        const PRICE_LIST = {
+            "Consultation": 1300,
+            "Consultation (Senior Optometrist)": 600,
+            "Consultation with Fundus Exam": 1500,
+            "Emergency Consultation": 2000,
+            "Follow-up (within 15 days)": 0,
+            "Follow-up (after 15 days)": 1300, // Matched to regular
+            "Computer Vision Syndrome Evaluation": 1000,
+            "BP Check-up": 100,
+            "Medical Certificate": 500,
+            "Fundus Photography": 1500,
+            "Comprehensive Diabetic Eye Check-up": 1500,
+            "Dry Eye Examination": 1500,
+            "OCT (Both Eyes)": 5000,
+            "OCT (Single Eye)": 2500,
+            "Visual Field Test (Both Eyes)": 3500,
+            "Visual Field Test (Single Eye)": 2000,
+            "Fundus Photo (Both Eyes)": 1500,
+            "Fundus Photo (Single Eye)": 900,
+            "Pachymetry": 1000,
+            "Contact Lens Trial": 4000,
+            "Chalazion I&C (per eye)": 10000,
+            "Corneal Foreign Body Removal (Mild)": 500,
+            "Ocular Injury Charge (Mild)": 1000,
+            "Conjunctival Wash (per eye)": 500,
+            "Eye Patch": 500,
+            "Eyemask": 299,
+            "Spectacle Frame": 1300,
+            "NCT": 200
+        };
+
+        /**
+         * Generates the selective choice dropdown inner HTML markup options sequentially.
+         */
+        function buildParticularsDropdownMarkup() {
+            let optionsHtml = `<option value="" data-price="0">-- Select Particular Service / Item --</option>`;
+            
+            // Generate categorical options blocks dynamically
+            for (const [service, price] of Object.entries(PRICE_LIST)) {
+                optionsHtml += `<option value="${service}" data-price="${price}">${service} (Rs. ${price})</option>`;
+            }
+            return optionsHtml;
+        }
+
+        /**
+         * Triggered automatically whenever a drop-down menu particular choice option switches.
+         */
+        function handleItemSelection(selectElement) {
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const price = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+            
+            const tr = selectElement.closest('tr');
+            const priceField = tr.querySelector('.price-field');
+            if (priceField) {
+                priceField.value = price;
+            }
+            recalculateLedgerTotals();
+        }
+
         /**
          * Translates integers to clean literal English words dynamically.
          */
@@ -308,19 +358,30 @@
         /**
          * Appends an operational table row matrix seamlessly into the system grid context.
          */
-        function addNewBillingRow() {
+        function addNewBillingRow(initialService = "", initialPrice = 0) {
             const tbody = document.getElementById('billing_rows_body');
             const currentDateVal = document.getElementById('bill_date').value;
             
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td class="p-3 border-r border-gray-300 text-left"><input type="text" placeholder="Item description detail..." class="w-full bg-transparent focus:outline-none font-bold text-gray-900"></td>
+                <td class="p-3 border-r border-gray-300 text-left">
+                    <select onchange="handleItemSelection(this)" class="particulars-dropdown w-full bg-transparent focus:outline-none font-bold text-gray-900 border-b border-dashed border-gray-200 py-0.5 appearance-none cursor-pointer">
+                        ${buildParticularsDropdownMarkup()}
+                    </select>
+                </td>
                 <td class="p-3 border-r border-gray-300 text-center text-gray-700"><input type="text" value="${currentDateVal}" class="w-full bg-transparent text-center focus:outline-none item-date-field font-semibold"></td>
-                <td class="p-3 border-r border-gray-300"><input type="number" value="0" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-right focus:outline-none price-field font-bold"></td>
+                <td class="p-3 border-r border-gray-300"><input type="number" value="${initialPrice}" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-right focus:outline-none price-field font-bold"></td>
                 <td class="p-3 border-r border-gray-300"><input type="number" value="1" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-center focus:outline-none qty-field font-bold"></td>
-                <td class="p-3 font-black text-gray-900 text-right net-amount-cell">0.00</td>
+                <td class="p-3 font-black text-gray-900 text-right net-amount-cell">${initialPrice.toFixed(2)}</td>
             `;
             tbody.appendChild(tr);
+
+            // Set select elements values if parameters match preset values
+            if (initialService) {
+                const dropdown = tr.querySelector('.particulars-dropdown');
+                dropdown.value = initialService;
+            }
+
             recalculateLedgerTotals();
         }
 
@@ -389,16 +450,10 @@
                 initializeDefaultDate();
                 
                 const tbody = document.getElementById('billing_rows_body');
-                tbody.innerHTML = `
-                    <tr>
-                        <td class="p-3 border-r border-gray-300 text-left"><input type="text" placeholder="Item description detail..." class="w-full bg-transparent focus:outline-none font-bold text-gray-900"></td>
-                        <td class="p-3 border-r border-gray-300 text-center text-gray-700"><input type="text" value="${document.getElementById('bill_date').value}" class="w-full bg-transparent text-center focus:outline-none item-date-field font-semibold"></td>
-                        <td class="p-3 border-r border-gray-300"><input type="number" value="0" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-right focus:outline-none price-field font-bold"></td>
-                        <td class="p-3 border-r border-gray-300"><input type="number" value="1" oninput="recalculateLedgerTotals()" class="w-full bg-transparent text-center focus:outline-none qty-field font-bold"></td>
-                        <td class="p-3 font-black text-gray-900 text-right net-amount-cell">0.00</td>
-                    </tr>
-                `;
-                recalculateLedgerTotals();
+                tbody.innerHTML = ""; // Wipe entries
+                
+                // Add single initialized empty default selector line template
+                addNewBillingRow();
                 generateSystemInvoiceNumber();
             }
         }
@@ -406,7 +461,11 @@
         // Initialize state engine on render verification complete
         window.addEventListener('DOMContentLoaded', () => {
             initializeDefaultDate();
-            recalculateLedgerTotals();
+            
+            // Seed two initial default item entries as sample rows matching your previous interface state
+            addNewBillingRow("Consultation", 1300);
+            addNewBillingRow("Visual Field Test (Both Eyes)", 3500);
+            
             generateSystemInvoiceNumber();
 
             // Setup input listener to instantly parse explicit custom text overwrites on booking date field changes
