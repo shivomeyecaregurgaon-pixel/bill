@@ -89,8 +89,8 @@
                         <h1 class="text-3xl font-black text-blue-900 tracking-tight leading-none">SHIVOM EYE CARE</h1>
                         <p class="text-xs font-black text-blue-600 uppercase tracking-widest mt-1.5">Your Eyes, Our Care</p>
                         <p class="text-xs text-gray-600 font-medium mt-1.5 leading-tight">
-                            <strong>Dr. Kenshuk Marwah</strong> — MS, FICO (UK), DNB, FVRS<br>
-                            DMC Reg No: 29327 | shivomeyecare@gmail.com
+                            <strong>Dr. Kenshuk Marwah</strong> MS, FICO (UK), DNB, FVRS 18+ Years of trust<br>
+                            HMC Reg No: HN-013035 | shivomeyecare@gmail.com
                         </p>
                     </div>
                 </div>
@@ -202,7 +202,9 @@
     </main>
 
     <script>
+        // Central Fee & Complete Pharmacy Medication Map Schedule Data Structure
         const PRICE_LIST = {
+            // --- Diagnostics & Optical Services ---
             "Consultation": 1300,
             "Consultation (Senior Optometrist)": 600,
             "Consultation with Fundus Exam": 1500,
@@ -230,13 +232,59 @@
             "Eye Patch": 500,
             "Eyemask": 299,
             "Spectacle Frame": 1300,
-            "NCT": 200
+            "NCT": 200,
+
+            // --- Pharmacy Drops / Solutions & Oral Meds ---
+            "CARBOXY (CMC)": 100,
+            "SONO FUSION": 450,
+            "SONO HYALURONATE": 330,
+            "LUBCIN": 375,
+            "MIBOXY (Moxifloxacin)": 100,
+            "OBIN-F (TOBRAMYCIN)": 160,
+            "MIBOXY-D (Moxy & Dexa)": 120,
+            "MIBOXY-P (MOXI & PREDNISOLONE)": 125,
+            "GATITEC-F": 155,
+            "MOLEF-LP": 170,
+            "MYFLUR (Fluorometholone)": 100,
+            "FLOPPY (Fluorometholone)": 100,
+            "ILOTO (Loteprednol)": 140,
+            "OLOPRO": 160,
+            "OLOPRO-KT (Olo & Keto)": 160,
+            "ZOL-AH": 100,
+            "Eye Drop – Olopro": 190,
+            "NETANZA (Natamycin)": 120,
+            "VORIZONE": 360,
+            "BRISHIELD (Brimonidine)": 200,
+            "TRAVIPRESS-PF": 220,
+            "LOPRESS-250 (Acetazolamide)": 45,
+            "SAFEATRO": 200,
+            "Eye Drop – Sono Max": 550,
+            "Eye Drop – Motogrip": 255,
+            "CHLOINT-H EYE OINTMENT": 71.42,
+            "CHLOINT PX EYE OINTMENT": 78.57,
+            "PROTAIR-F TAB (Fexofenadine)": 114.28,
+            "AURIMOX-CV TABLET (Amoxicillin)": 200,
+            "BENZOMIN-PLUS (SYRUP)": 111,
+            "COPVIT PLUS": 230,
+            "OMEGA 3 FATTY ACID 500MG": 300,
+            "PROMAQ EYE CARE GUMMIES": 264.4,
+            "NAPAH": 250,
+            "FERR-XT": 150,
+            "CORMEGA-500": 190,
+            "Tablet – Imega": 200
         };
 
+        /**
+         * Generates the selective choice dropdown inner HTML markup options sorted alphabetically (Clean names).
+         */
         function buildParticularsDropdownMarkup() {
-            let optionsHtml = `<option value="" data-price="0">-- Select Particular Service / Item --</option>`;
-            for (const [service, price] of Object.entries(PRICE_LIST)) {
-                optionsHtml += `<option value="${service}" data-price="${price}">${service}</option>`;
+            let optionsHtml = `<option value="" data-price="0">-- Select Particular Service / Medicine --</option>`;
+            
+            // Collect keys and sort alphabetically
+            const sortedKeys = Object.keys(PRICE_LIST).sort();
+            
+            for (const service of sortedKeys) {
+                optionsHtml += `<option value="${service}" data-price="${PRICE_LIST[service]}">${service}</option>`;
             }
             return optionsHtml;
         }
@@ -352,7 +400,6 @@
                 computedSubtotal += netAmount;
             });
 
-            // Correctly assigns the dynamically totaled row sums to Gross Bill Amount fields
             document.getElementById('label_bill_amount').innerText = computedSubtotal.toFixed(2);
 
             const discountInputStr = document.getElementById('input_discount').value.trim();
@@ -400,8 +447,11 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             initializeDefaultDate();
+            
+            // Seed sample defaults from services & medications
             addNewBillingRow("Consultation", 1300);
-            addNewBillingRow("Visual Field Test (Both Eyes)", 3500);
+            addNewBillingRow("SONO FUSION", 450);
+            
             generateSystemInvoiceNumber();
             document.getElementById('bill_date').addEventListener('input', generateSystemInvoiceNumber);
         });
