@@ -70,7 +70,7 @@
             <div class="flex gap-2">
                 <button type="button" onclick="addNewBillingRow()" class="bg-slate-700 hover:bg-slate-600 text-xs font-bold px-3 py-1.5 rounded transition">+ Add Line Item</button>
                 <button type="button" onclick="clearInvoiceBoard()" class="bg-red-950 hover:bg-red-900 border border-red-800 text-xs font-bold px-3 py-1.5 rounded transition">⟲ Reset Board</button>
-                <button type="button" onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-xs font-bold px-4 py-1.5 rounded transition shadow-sm">💾 Print / Save Bill PDF</button>
+                <button type="button" onclick="validateAndPrint()" class="bg-blue-600 hover:bg-blue-700 text-xs font-bold px-4 py-1.5 rounded transition shadow-sm">💾 Print / Save Bill PDF</button>
                 <button type="button" onclick="sendInvoiceViaWhatsApp()" class="bg-green-600 hover:bg-green-700 text-xs font-bold px-4 py-1.5 rounded transition shadow-sm flex items-center gap-1">💬 Send via WhatsApp</button>
             </div>
         </div>
@@ -96,8 +96,7 @@
                     <p class="font-bold text-gray-900 text-sm">📞 Landline: 01244377759</p>
                     <p class="font-bold text-blue-700 text-sm">💬 Call / WhatsApp: 9485740077</p>
                     <p class="mt-1">B-80, B Block, Mayfield Garden,</p>
-                    <p>Sector 50, Gurugram, Haryana 122018,</p>
-                     <p>Timings: Mon to Sat 9 AM to 6 PM</p>
+                    <p>Sector 50, Gurugram, Haryana 122018</p>
                     <p class="text-blue-600 font-bold text-xs pt-0.5">www.shivomeyecare.com</p>
                 </div>
             </div>
@@ -105,18 +104,18 @@
 
         <section class="print-grid grid grid-cols-1 md:grid-cols-12 gap-6 text-sm border-b border-gray-200 pb-5 relative z-10">
             <div class="print-col md:col-span-6 space-y-2">
-                <div class="flex items-center gap-1"><span class="font-bold text-gray-900 min-w-[75px]">Patient:</span><input type="text" id="bill_name" value="Master Yuvan" class="w-full bg-transparent font-black text-gray-900 focus:outline-none text-base"></div>
-                <div class="flex items-center gap-1"><span class="font-bold text-gray-600 min-w-[75px]">Age / Sex:</span><input type="text" id="bill_age_sex" value="16 Years / Male" class="w-full bg-transparent font-bold text-gray-800 focus:outline-none"></div>
-                <div class="flex items-center gap-1"><span class="font-bold text-gray-600 min-w-[75px]">Phone:</span><input type="text" id="bill_phone" value="8700719377" class="w-full bg-transparent font-bold text-gray-800 focus:outline-none"></div>
-                <div class="flex items-center gap-1"><span class="font-bold text-gray-600 min-w-[75px]">Address:</span><input type="text" id="bill_address" value="Gurugram, Haryana" class="w-full bg-transparent font-bold text-gray-800 focus:outline-none"></div>
+                <div class="flex items-center gap-1"><span class="font-bold text-gray-900 min-w-[75px]">Patient:</span><input type="text" id="bill_name" placeholder="Enter Full Name" class="w-full bg-transparent font-black text-gray-900 focus:outline-none text-base border-b border-dotted border-gray-300"></div>
+                <div class="flex items-center gap-1"><span class="font-bold text-gray-600 min-w-[75px]">Age / Sex:</span><input type="text" id="bill_age_sex" placeholder="e.g. 25 Years / Female" class="w-full bg-transparent font-bold text-gray-800 focus:outline-none border-b border-dotted border-gray-300"></div>
+                <div class="flex items-center gap-1"><span class="font-bold text-gray-600 min-w-[75px]">Phone:</span><input type="text" id="bill_phone" placeholder="10 Digit Number" class="w-full bg-transparent font-bold text-gray-800 focus:outline-none border-b border-dotted border-gray-300"></div>
+                <div class="flex items-center gap-1"><span class="font-bold text-gray-600 min-w-[75px]">Address:</span><input type="text" id="bill_address" placeholder="City, State" class="w-full bg-transparent font-bold text-gray-800 focus:outline-none border-b border-dotted border-gray-300"></div>
             </div>
 
             <div class="print-col md:col-span-6 md:pl-8 space-y-2">
-                <div class="flex items-center gap-1"><span class="font-bold text-gray-600 min-w-[120px]">UHID No:</span><input type="text" id="bill_uhid" value="556" class="w-full bg-transparent font-black text-gray-900 focus:outline-none"></div>
+                <div class="flex items-center gap-1"><span class="font-bold text-gray-600 min-w-[120px]">UHID No:</span><input type="text" id="bill_uhid" value="" placeholder="Required" class="w-full bg-transparent font-black text-gray-900 focus:outline-none border-b border-dotted border-gray-300"></div>
                 
                 <div class="flex items-center gap-1">
                     <span class="font-bold text-gray-600 min-w-[120px]">Booking Date:</span>
-                    <input type="text" id="bill_date" class="w-full bg-transparent font-bold text-gray-800 focus:outline-none">
+                    <input type="text" id="bill_date" class="w-full bg-transparent font-bold text-gray-800 focus:outline-none border-b border-dotted border-gray-300">
                 </div>
                 
                 <div class="no-print flex items-center gap-1">
@@ -126,7 +125,7 @@
                 
                 <div class="flex items-center gap-1">
                     <span class="font-bold text-gray-900 min-w-[120px]">Invoice Number:</span>
-                    <input type="text" id="label_invoice_num" class="w-full bg-transparent font-black text-blue-900 tracking-wide focus:outline-none text-sm" value="Generating...">
+                    <input type="text" id="label_invoice_num" class="w-full bg-transparent font-black text-blue-900 tracking-wide focus:outline-none text-sm" value="Generating..." readonly>
                 </div>
             </div>
         </section>
@@ -204,7 +203,6 @@
     </main>
 
     <script>
-        // System Data Inventory Map
         const PRICE_LIST = {
             "Consultation": 1300,
             "Consultation (Senior Optometrist)": 600,
@@ -325,7 +323,6 @@
             const priceField = tr.querySelector('.price-field');
 
             if (PRICE_LIST.hasOwnProperty(currentTextValue)) {
-                // Rounds list values immediately upon matching key item inputs
                 priceField.value = Math.round(PRICE_LIST[currentTextValue]);
             }
             recalculateLedgerTotals();
@@ -399,8 +396,6 @@
         function addNewBillingRow(initialService = "", initialPrice = 0) {
             const tbody = document.getElementById('billing_rows_body');
             const tr = document.createElement('tr');
-            
-            // Enforce rounding onto parameters passed systematically during line loading routines
             const roundedPrice = Math.round(initialPrice);
             
             tr.innerHTML = `
@@ -421,7 +416,6 @@
 
             Array.from(tbody.children).forEach(row => {
                 const qty = parseFloat(row.querySelector('.qty-field').value) || 0;
-                // Force full tracking variable parsing metrics to round out whole integers directly
                 const price = Math.round(parseFloat(row.querySelector('.price-field').value) || 0);
                 const netAmount = Math.round(qty * price);
                 
@@ -457,12 +451,54 @@
             document.getElementById('bill_words_amount').innerText = convertAmountToWords(currentPaidVal);
         }
 
+        /* STRICT FORM VALIDATION CHECK ENGINE */
+        function checkFormValidation() {
+            const patientName = document.getElementById('bill_name').value.trim();
+            const ageSex = document.getElementById('bill_age_sex').value.trim();
+            const rawPhone = document.getElementById('bill_phone').value.trim();
+            const address = document.getElementById('bill_address').value.trim();
+            const uhid = document.getElementById('bill_uhid').value.trim();
+            const date = document.getElementById('bill_date').value.trim();
+
+            if (!patientName || !ageSex || !rawPhone || !address || !uhid || !date) {
+                alert("❌ ACCESS DENIED: Please fill out ALL patient profile details (Name, Age/Sex, Phone, Address, Date, and UHID) before continuing.");
+                return false;
+            }
+
+            let cleanPhone = rawPhone.replace(/\D/g, ''); 
+            if (cleanPhone.length < 10) {
+                alert("❌ INVALID DATA: Phone field must be at least 10 digits long.");
+                return false;
+            }
+
+            let validRowsCount = 0;
+            const rows = document.querySelectorAll('#billing_rows_body tr');
+            rows.forEach(row => {
+                const particular = row.querySelector('.particulars-input').value.trim();
+                if (particular) validRowsCount++;
+            });
+
+            if (validRowsCount === 0) {
+                alert("❌ INCOMPLETE BILL: You must add at least 1 valid line item descriptor to the grid details section.");
+                return false;
+            }
+
+            return true;
+        }
+
+        function validateAndPrint() {
+            if (checkFormValidation()) {
+                window.print();
+            }
+        }
+
         function clearInvoiceBoard() {
             if(confirm("Are you sure you want to clean the active invoice grid completely?")) {
                 document.getElementById('bill_name').value = "";
                 document.getElementById('bill_phone').value = "";
                 document.getElementById('bill_age_sex').value = "";
                 document.getElementById('bill_address').value = "";
+                document.getElementById('bill_uhid').value = "";
                 document.getElementById('input_discount').value = "0";
                 document.getElementById('input_paid').value = "0";
                 document.getElementById('bill_seq_no').value = "1";
@@ -475,6 +511,8 @@
         }
 
         function sendInvoiceViaWhatsApp() {
+            if (!checkFormValidation()) return;
+
             const patientName = document.getElementById('bill_name').value.trim();
             let rawPhone = document.getElementById('bill_phone').value.trim();
             const invoiceNum = document.getElementById('label_invoice_num').value.trim();
@@ -486,12 +524,6 @@
             const paid = document.getElementById('label_paid_printed').innerText;
             const due = document.getElementById('label_balance').innerText;
 
-            if (!rawPhone) {
-                alert("Please enter a patient phone number first.");
-                return;
-            }
-
-            // Standardize Indian phone format (+91 prefix tracking logic)
             let cleanPhone = rawPhone.replace(/\D/g, ''); 
             if (cleanPhone.length === 10) {
                 cleanPhone = '91' + cleanPhone;
@@ -512,8 +544,8 @@
             let message = `*SHIVOM EYE CARE* 👁\n`;
             message += `Your Eyes, Our Care\n`;
             message += `----------------------------------------\n`;
-            message += `Dear *${patientName || 'Patient'}*,\n`;
-            message += `Thank you for choosing Shivom Eye Care. Here is your digital invoice summary:\n\n`;
+            message += `Dear *${patientName}*,\n`;
+            message += `Thank you for choosing Shivom Eye Care. Here is your digital invoice summary. Please find your official printed file attached below:\n\n`;
             
             message += `📄 *Invoice No:* ${invoiceNum}\n`;
             message += `📅 *Date:* ${billDate}\n`;
@@ -547,11 +579,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             initializeDefaultDate();
             populateSearchDatalist();
-            
-            // Seed clean whole number rounded layout samples
-            addNewBillingRow("Consultation", 1300);
-            addNewBillingRow("Sono Fusion", 450);
-            
+            addNewBillingRow();
             generateSystemInvoiceNumber();
             document.getElementById('bill_date').addEventListener('input', generateSystemInvoiceNumber);
         });
