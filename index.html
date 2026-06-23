@@ -71,6 +71,7 @@
                 <button type="button" onclick="addNewBillingRow()" class="bg-slate-700 hover:bg-slate-600 text-xs font-bold px-3 py-1.5 rounded transition">+ Add Line Item</button>
                 <button type="button" onclick="clearInvoiceBoard()" class="bg-red-950 hover:bg-red-900 border border-red-800 text-xs font-bold px-3 py-1.5 rounded transition">⟲ Reset Board</button>
                 <button type="button" onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-xs font-bold px-4 py-1.5 rounded transition shadow-sm">💾 Print / Save Bill PDF</button>
+                <button type="button" onclick="sendInvoiceViaWhatsApp()" class="bg-green-600 hover:bg-green-700 text-xs font-bold px-4 py-1.5 rounded transition shadow-sm flex items-center gap-1">💬 Send via WhatsApp</button>
             </div>
         </div>
     </div>
@@ -95,7 +96,8 @@
                     <p class="font-bold text-gray-900 text-sm">📞 Landline: 01244377759</p>
                     <p class="font-bold text-blue-700 text-sm">💬 Call / WhatsApp: 9485740077</p>
                     <p class="mt-1">B-80, B Block, Mayfield Garden,</p>
-                    <p>Sector 50, Gurugram, Haryana 122018</p>
+                    <p>Sector 50, Gurugram, Haryana 122018,</p>
+                     <p>Timings: Mon to Sat 9 AM to 6 PM</p>
                     <p class="text-blue-600 font-bold text-xs pt-0.5">www.shivomeyecare.com</p>
                 </div>
             </div>
@@ -144,12 +146,12 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200" id="billing_rows_body">
-                    </tbody>
+                </tbody>
             </table>
         </section>
 
         <datalist id="medications_services_list">
-            </datalist>
+        </datalist>
 
         <section class="flex flex-col items-end pt-1 text-sm font-semibold text-gray-800 relative z-10">
             <div class="w-full sm:w-1/2 border border-gray-300 divide-y divide-gray-200">
@@ -470,6 +472,76 @@
                 addNewBillingRow();
                 generateSystemInvoiceNumber();
             }
+        }
+
+        function sendInvoiceViaWhatsApp() {
+            const patientName = document.getElementById('bill_name').value.trim();
+            let rawPhone = document.getElementById('bill_phone').value.trim();
+            const invoiceNum = document.getElementById('label_invoice_num').value.trim();
+            const billDate = document.getElementById('bill_date').value.trim();
+            
+            const totalAmount = document.getElementById('label_bill_amount').innerText;
+            const discount = document.getElementById('label_discount_computed').innerText;
+            const payable = document.getElementById('label_payable').innerText;
+            const paid = document.getElementById('label_paid_printed').innerText;
+            const due = document.getElementById('label_balance').innerText;
+
+            if (!rawPhone) {
+                alert("Please enter a patient phone number first.");
+                return;
+            }
+
+            // Standardize Indian phone format (+91 prefix tracking logic)
+            let cleanPhone = rawPhone.replace(/\D/g, ''); 
+            if (cleanPhone.length === 10) {
+                cleanPhone = '91' + cleanPhone;
+            }
+
+            let itemsText = "";
+            const rows = document.querySelectorAll('#billing_rows_body tr');
+            rows.forEach((row, index) => {
+                const particular = row.querySelector('.particulars-input').value.trim();
+                const price = row.querySelector('.price-field').value || 0;
+                const qty = row.querySelector('.qty-field').value || 1;
+                
+                if (particular) {
+                    itemsText += `${index + 1}. *${particular}* (Qty: ${qty}) - Rs. ${price}\n`;
+                }
+            });
+
+            let message = `*SHIVOM EYE CARE* 👁\n`;
+            message += `Your Eyes, Our Care\n`;
+            message += `----------------------------------------\n`;
+            message += `Dear *${patientName || 'Patient'}*,\n`;
+            message += `Thank you for choosing Shivom Eye Care. Here is your digital invoice summary:\n\n`;
+            
+            message += `📄 *Invoice No:* ${invoiceNum}\n`;
+            message += `📅 *Date:* ${billDate}\n`;
+            message += `----------------------------------------\n`;
+            message += `*PARTICULARS:*\n`;
+            message += itemsText + `\n`;
+            message += `----------------------------------------\n`;
+            
+            message += `💰 *Subtotal:* Rs. ${totalAmount}\n`;
+            if (parseInt(discount) > 0) {
+                message += `🏷 *Discount:* Rs. ${discount}\n`;
+            }
+            message += `⭐ *Final Payable:* Rs. ${payable}\n`;
+            message += `✅ *Paid Amount:* Rs. ${paid}\n`;
+            
+            if (parseInt(due) > 0) {
+                message += `⚠️ *Outstanding Due:* Rs. ${due}\n`;
+            } else {
+                message += `🎉 *Status:* Fully Paid\n`;
+            }
+            
+            message += `----------------------------------------\n`;
+            message += `For queries, contact us at 📞 01244377759. Have a wonderful day!`;
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappWebUrl = `https://web.whatsapp.com/send?phone=${cleanPhone}&text=${encodedMessage}`;
+            
+            window.open(whatsappWebUrl, '_blank');
         }
 
         window.addEventListener('DOMContentLoaded', () => {
